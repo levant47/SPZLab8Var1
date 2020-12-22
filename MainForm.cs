@@ -14,6 +14,7 @@ namespace SPZLab8Var1
             originalDesktopBackgroundColorTextBox.Text = Registry.CurrentUser.OpenSubKey("Control Panel\\Colors").GetValue("Background").ToString();
             var colors = originalDesktopBackgroundColorTextBox.Text.Split(" ").Select(int.Parse).ToList();
             originalColorPictureBox.BackColor = Color.FromArgb(colors[0], colors[1], colors[2]);
+            newColorPictureBox.BackColor = Color.FromArgb(colors[0], colors[1], colors[2]);
         }
 
         private void changeDesktopColorButton_Click(object sender, System.EventArgs e)
@@ -25,8 +26,6 @@ namespace SPZLab8Var1
                 return;
             }
             SetDesktopBackgroundColor(newColorString);
-            var colors = newColorString.Split(" ").Select(int.Parse).ToList();
-            newColorPictureBox.BackColor = Color.FromArgb(colors[0], colors[1], colors[2]);
         }
 
         private bool IsColorStringValid(string colorString)
@@ -35,8 +34,12 @@ namespace SPZLab8Var1
             return words.Count == 3 && words.All(word => int.TryParse(word, out var colorByte) && colorByte >= 0 && colorByte < 256);
         }
 
-        private void SetDesktopBackgroundColor(string newColorString) =>
+        private void SetDesktopBackgroundColor(string newColorString)
+        {
             Registry.CurrentUser.OpenSubKey("Control Panel\\Colors", true).SetValue("Background", newColorString);
+            var colors = newColorString.Split(" ").Select(int.Parse).ToList();
+            newColorPictureBox.BackColor = Color.FromArgb(colors[0], colors[1], colors[2]);
+        }
 
         protected override void OnClosed(System.EventArgs e)
         {
